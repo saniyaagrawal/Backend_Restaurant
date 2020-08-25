@@ -29,6 +29,37 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+function auth(req,res,next){
+  console.log(req.headers);
+
+  var authHead=req.headers.authorization;
+
+  if(authHead){
+    var auth=new Buffer.from(authHead.split(' ')[1],'base64').toString().split(':');
+
+    var username=auth[0];
+    var password=auth[1];
+    if(username==='admin' && password==='password'){
+      next();
+    }
+    else{
+      var err=new Error('not authenicated');
+      res.setHeader('WWW-Authenticate','Basic')
+      err.status=401;
+      return next(err);
+    }
+  }
+  else{
+    var err=new Error('not authenicated');
+    res.setHeader('WWW-Authenticate','Basic')
+    err.status=401;
+    return next(err);
+  }
+}
+
+app.use(auth);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
