@@ -3,7 +3,7 @@ const bodyParser=require('body-parser');
 
 const mongoose=require('mongoose');
 const Promotions=require('../models/promotions')
-const autheticate=require('../authenticate');
+const authenticate=require('../authenticate');
 
 
 const promoRouter=express.Router();
@@ -19,11 +19,11 @@ promoRouter.route('/')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.put(autheticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     res.statusCode=403;
     res.end('put promotions not supported');
 })
-.post(autheticate.verifyUser, (req,res,next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promotions.create(req.body)
     .then((promo)=>{
         res.statusCode=200;
@@ -32,7 +32,7 @@ promoRouter.route('/')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.delete(autheticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promotions.remove({})
     .then((resp)=>{
         res.statusCode=200;
@@ -52,11 +52,11 @@ promoRouter.route('/:promoId')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.post(autheticate.verifyUser, (req,res,next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     res.statusCode=403;
     res.end('post promotions not supported');
 })
-.put(autheticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promotions.findByIdAndUpdate(req.params.promoId,{
         $set:req.body
     },{
@@ -69,7 +69,7 @@ promoRouter.route('/:promoId')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.delete(autheticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Promotions.findByIdAndRemove(req.params.promoId)
     .then((resp)=>{
         res.statusCode=200;

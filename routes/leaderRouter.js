@@ -4,7 +4,7 @@ const bodyParser=require('body-parser');
 const mongoose=require('mongoose');
 const Leaders=require('../models/leaders')
 
-const autheticate=require('../authenticate');
+const authenticate=require('../authenticate');
 
 const leaderRouter=express.Router();
 leaderRouter.use(bodyParser.json());
@@ -19,11 +19,11 @@ leaderRouter.route('/')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.put(autheticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     res.statusCode=403;
     res.end('put Leaders not supported');
 })
-.post(autheticate.verifyUser, (req,res,next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Leaders.create(req.body)
     .then((leader)=>{
         res.statusCode=200;
@@ -32,7 +32,7 @@ leaderRouter.route('/')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.delete(autheticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Leaders.remove({})
     .then((resp)=>{
         res.statusCode=200;
@@ -52,11 +52,11 @@ leaderRouter.route('/:leaderId')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.post(autheticate.verifyUser, (req,res,next) => {
+.post(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     res.statusCode=403;
     res.end('post Leaders not supported');
 })
-.put(autheticate.verifyUser, (req,res,next) => {
+.put(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Leaders.findByIdAndUpdate(req.params.leaderId,{
         $set:req.body
     },{
@@ -69,7 +69,7 @@ leaderRouter.route('/:leaderId')
     },(err)=>console.log(err))
     .catch((err)=>console.log(err))
 })
-.delete(autheticate.verifyUser, (req,res,next) => {
+.delete(authenticate.verifyUser, authenticate.verifyAdmin, (req,res,next) => {
     Leaders.findByIdAndRemove(req.params.leaderId)
     .then((resp)=>{
         res.statusCode=200;
